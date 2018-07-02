@@ -50,7 +50,6 @@
 </template>
 
 <script>
-	/* eslint-disable */
 	export default {
 		name: "kanban",
 		data: function(){
@@ -69,39 +68,30 @@
                         title: 'Current Tasks',
                         todoList: [],
                         tasksRemaining: 0,
-						checkTitle: false
+                        checkTitle: false
                     },
                     {
                         title: 'Completed Tasks',
                         todoList: [],
                         tasksRemaining: 0,
-						checkTitle: false
+                        checkTitle: false
                     }
                 ]
 			}
 		},
         computed: {
-			// countClasses: function(){
-			// 	return {
-             //        warning: this.
-             //        alert: this.setAlert ? this.setAlert : ''
-             //    }
-			// }
+
         },
 		methods: {
             addTask: function(){
                 var kanbanIndex = this.$refs.formSelect.options[this.$refs.formSelect.selectedIndex].id - 0,
                     env = this.lists[kanbanIndex];
-
 				var	input = this.userTask,
 					date = new Date().toLocaleDateString();
-
-
 				if(!input){
 					alert('Add some text ;)');
 					return;
                 }
-
                 env.todoList.push({
                     date: date,
                     description: input,
@@ -119,19 +109,19 @@
 				this.listCount();
             },
             removeBoard: function(index){
-            	this.lists.splice(index,1);
+                this.lists.splice(index,1);
 				this.listCount();
             },
             migrateTask: function(item){
 				item.checkMigrate = !item.checkMigrate;
             },
             moveTask: function(e, currentBoard, item, itemIndex){
-				 // - 0 to coerce to number
-                 var kanbanIndex = (e.target.options[e.target.options.selectedIndex].id) - 0;
-                 this.lists[kanbanIndex].todoList.push(item);
-                 this.removeTask(currentBoard, itemIndex);
+                // - 0 to coerce to number
+                var kanbanIndex = (e.target.options[e.target.options.selectedIndex].id) - 0;
+                this.lists[kanbanIndex].todoList.push(item);
+                this.removeTask(currentBoard, itemIndex);
 
-                 this.migrateTask(item);
+                this.migrateTask(item);
             },
             removeTask: function(board, index){
                 board.todoList.splice(index, 1);
