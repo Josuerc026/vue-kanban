@@ -50,93 +50,94 @@
 </template>
 
 <script>
-	export default {
-		name: "kanban",
-		data: function(){
-			return{
-				setWarning: false,
-                setAlert: false,
-                userTask: '',
-                lists: [
-                    {
-                        title: 'Upcoming Tasks',
-                        todoList: [],
-                        tasksRemaining: 0,
-                        checkTitle: false
-                    },
-                    {
-                        title: 'Current Tasks',
-                        todoList: [],
-                        tasksRemaining: 0,
-                        checkTitle: false
-                    },
-                    {
-                        title: 'Completed Tasks',
-                        todoList: [],
-                        tasksRemaining: 0,
-                        checkTitle: false
-                    }
-                ]
-			}
-		},
-        computed: {
-
-        },
-		methods: {
-            addTask: function(){
-                var kanbanIndex = this.$refs.formSelect.options[this.$refs.formSelect.selectedIndex].id - 0,
-                    env = this.lists[kanbanIndex];
-				var	input = this.userTask,
-					date = new Date().toLocaleDateString();
-				if(!input){
-					alert('Add some text ;)');
-					return;
+export default {
+    name: "kanban",
+    data: function(){
+        return{
+            setWarning: false,
+            setAlert: false,
+            userTask: '',
+            lists: [
+                {
+                    title: 'Upcoming Tasks',
+                    todoList: [],
+                    tasksRemaining: 0,
+                    checkTitle: false
+                },
+                {
+                    title: 'Current Tasks',
+                    todoList: [],
+                    tasksRemaining: 0,
+                    checkTitle: false
+                },
+                {
+                    title: 'Completed Tasks',
+                    todoList: [],
+                    tasksRemaining: 0,
+                    checkTitle: false
                 }
-                env.todoList.push({
-                    date: date,
-                    description: input,
-                    checkMigrate: false
-                });
-                env.userTask = '';
-            },
-            addBoard: function(){
-                this.lists.push( {
-					title: 'Add Title',
-					todoList: [],
-					tasksRemaining: 0,
-					checkTitle: false
-				});
-				this.listCount();
-            },
-            removeBoard: function(index){
-                this.lists.splice(index,1);
-				this.listCount();
-            },
-            migrateTask: function(item){
-				item.checkMigrate = !item.checkMigrate;
-            },
-            moveTask: function(e, currentBoard, item, itemIndex){
-                // - 0 to coerce to number
-                var kanbanIndex = (e.target.options[e.target.options.selectedIndex].id) - 0;
-                this.lists[kanbanIndex].todoList.push(item);
-                this.removeTask(currentBoard, itemIndex);
+            ]
+        }
+    },
+    computed: {
 
-                this.migrateTask(item);
-            },
-            removeTask: function(board, index){
-                board.todoList.splice(index, 1);
-            },
-            editTitle: function(board){
-                board.checkTitle = !board.checkTitle;
-            },
-            listCount: function(){
-				this.$emit('list-count', this.lists.length);
+    },
+    methods: {
+        addTask: function(){
+			// - 0 to coerce to number
+            let kanbanIndex = this.$refs.formSelect.options[this.$refs.formSelect.selectedIndex].id - 0,
+                env = this.lists[kanbanIndex],
+                input = this.userTask,
+                date = new Date().toLocaleDateString();
+
+            if(!input){
+                alert('Add some text ;)');
+                return;
             }
-		},
-        beforeMount: function () {
-			this.listCount();
-		}
-	}
+            env.todoList.push({
+                date: date,
+                description: input,
+                checkMigrate: false
+            });
+            env.userTask = '';
+        },
+        addBoard: function(){
+            this.lists.push( {
+                title: 'Add Title',
+                todoList: [],
+                tasksRemaining: 0,
+                checkTitle: false
+            });
+            this.listCount();
+        },
+        removeBoard: function(index){
+            this.lists.splice(index,1);
+            this.listCount();
+        },
+        migrateTask: function(item){
+            item.checkMigrate = !item.checkMigrate;
+        },
+        moveTask: function(e, currentBoard, item, itemIndex){
+            let kanbanIndex = (e.target.options[e.target.options.selectedIndex].id) - 0;
+
+            this.lists[kanbanIndex].todoList.push(item);
+            this.removeTask(currentBoard, itemIndex);
+            this.migrateTask(item);
+        },
+        removeTask: function(board, index){
+            board.todoList.splice(index, 1);
+        },
+        editTitle: function(board){
+            board.checkTitle = !board.checkTitle;
+        },
+        listCount: function(){
+            this.$emit('list-count', this.lists.length);
+        }
+    },
+    beforeMount: function () {
+        this.listCount();
+    }
+}
 </script>
 
 <style scoped>
