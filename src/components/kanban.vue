@@ -17,7 +17,10 @@
             </form>
             <div class="kanban-container">
                 <div class="kanban" v-for="(kanban, index) in lists" :key="kanban.id">
-                    <div class="kanban-task-count" v-bind:class="{warning: (kanban.todoList.length > 4) && (kanban.todoList.length < 7)}">
+                    <div class="kanban-task-count" v-bind:class="{
+                        warning: (kanban.todoList.length > 4) && (kanban.todoList.length < 7),
+                        caution: (kanban.todoList.length >= 7)
+                    }">
                         <span>{{kanban.todoList.length}}</span>
                     </div>
                     <div v-if="kanban.checkTitle">
@@ -26,9 +29,9 @@
                     </div>
                     <h3>
                         {{kanban.title}}
-                        <button @click="editTitle(kanban)">edit</button>
+                        <button @click="editTitle(kanban)" class="edit-board-title">edit</button>
+                        <button @click="removeBoard(index)" class="remove-board">Delete</button>
                     </h3>
-                    <button @click="removeBoard(index)">Remove Board</button>
                     <ul>
                         <li v-for="(item, index) in kanban.todoList" :key="item.id" class="list-item">
                             <small>{{item.date}}</small>
@@ -141,6 +144,9 @@ export default {
 </script>
 
 <style scoped>
+    button{
+        cursor: pointer;
+    }
     fieldset{
         border: none;
     }
@@ -175,6 +181,10 @@ export default {
     .warning{
         background: yellow !important;
         color: #000 !important;
+    }
+    .caution{
+        background: #ff5747!important;
+        color: #fff !important;
     }
     .kanban-container{
         display: flex;
@@ -217,5 +227,15 @@ export default {
         margin-bottom: 15px;
         box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         transition: 0.25s all;
+    }
+    .remove-board{
+        background: #ff5747;
+        border: 0;
+        color: #fff;
+    }
+    .edit-board-title{
+        background: #0090ff;
+        border: 0;
+        color: #fff;
     }
 </style>
