@@ -8,7 +8,7 @@
                         <select ref="formSelect">
                             <option v-for="(koptions, index) in lists" :key="koptions.id" :id="index">{{koptions.title}}</option>
                         </select>
-                        <button type="submit" class="add-task">add task</button>
+                        <button type="submit" class="add-task">Add task</button>
                     </div>
                     <div class="board-inputs">
                         <button type="button" @click="addBoard" class="add-board">Add Board</button>
@@ -23,26 +23,34 @@
                     }">
                         <span>{{kanban.todoList.length}}</span>
                     </div>
-                    <div v-if="kanban.checkTitle">
+                    <div v-if="kanban.checkTitle" class="edit-title">
                         <input type="text" v-model="kanban.title">
-                        <button @click="editTitle(kanban)">done</button>
+                        <button @click="editTitle(kanban)" class="edit">done</button>
                     </div>
                     <h3>
                         {{kanban.title}}
-                        <button @click="editTitle(kanban)" class="edit-board-title">edit</button>
-                        <button @click="removeBoard(index)" class="remove-board">Delete</button>
+                        <div>
+                            <button @click="editTitle(kanban)" class="edit">edit</button>
+                            <button @click="removeBoard(index)" class="delete">Delete</button>
+                        </div>
                     </h3>
                     <ul>
                         <li v-for="(item, index) in kanban.todoList" :key="item.id" class="list-item">
-                            <small>{{item.date}}</small>
-                            <p>{{item.description}}</p>
-                            <button @click="migrateTask(item, null)">Move</button>
-                            <button @click="removeTask(kanban, index)">Delete</button>
-                            <div v-if="item.checkMigrate">
-                                <select @change="moveTask($event,kanban,item, index)">
-                                    <option>Select Board</option>
-                                    <option v-for="(koptions, index) in lists" :key="koptions.id" :id="index">{{koptions.title}}</option>
-                                </select>
+                            <div class="item-content">
+                                <p>{{item.description}}</p>
+                                <div class="item-group">
+                                    <small class="item-date">{{item.date}}</small>
+                                    <div class="btn-group-right">
+                                        <button @click="migrateTask(item, null)" class="edit">Move</button>
+                                        <button @click="removeTask(kanban, index)" class="delete">Delete</button>
+                                    </div>
+                                </div>
+                                <div v-if="item.checkMigrate">
+                                    <select @change="moveTask($event,kanban,item, index)">
+                                        <option>Select Board</option>
+                                        <option v-for="(koptions, index) in lists" :key="koptions.id" :id="index">{{koptions.title}}</option>
+                                    </select>
+                                </div>
                             </div>
                         </li>
                     </ul>
@@ -63,19 +71,51 @@ export default {
             lists: [
                 {
                     title: 'Upcoming Tasks',
-                    todoList: [],
+                    todoList: [
+                        {
+                            date: new Date().toLocaleDateString(),
+                            description: "Modify Header Component",
+                            checkMigrate: false
+                        },
+						{
+							date: new Date().toLocaleDateString(),
+							description: "Discuss 2.1 Feature set",
+							checkMigrate: false
+						},
+						{
+							date: new Date().toLocaleDateString(),
+							description: "Code Review - Front End",
+							checkMigrate: false
+						}
+                    ],
                     tasksRemaining: 0,
                     checkTitle: false
                 },
                 {
                     title: 'Current Tasks',
-                    todoList: [],
+                    todoList: [
+						{
+							date: new Date().toLocaleDateString(),
+							description: "Code Review - Backend",
+							checkMigrate: false
+						}
+                    ],
                     tasksRemaining: 0,
                     checkTitle: false
                 },
                 {
                     title: 'Completed Tasks',
-                    todoList: [],
+                    todoList: [
+						{
+							date: new Date().toLocaleDateString(),
+							description: "Translation Feature",
+							checkMigrate: false
+						},
+						{
+							date: new Date().toLocaleDateString(),
+							description: "Accessibility Audit",
+						}
+					],
                     tasksRemaining: 0,
                     checkTitle: false
                 }
@@ -153,15 +193,20 @@ export default {
     .add-board,
     .add-task{
         border: 0;
-        color: #04a09c;
+        color: #0090ff;
         font-weight: bold;
         padding: 5px 0;
         font-size: 1rem;
         cursor: pointer;
+        transition: 0.4s all;
     }
     .add-board:after,
-    .add-task:after{
-        content: '+';
+     .add-task:after{
+         content: '+';
+     }
+    .add-board:hover,
+    .add-task:hover{
+        color: #3874a0;
     }
     .add-task{
         margin-left: 10px;
@@ -209,7 +254,7 @@ export default {
         height: 30px;
         border-radius: 100%;
         border: 1px solid gray;
-        background: #04a09c;
+        background: #0090ff;
         color: #fff;
         transition: 0.25s all;
     }
@@ -228,14 +273,34 @@ export default {
         box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         transition: 0.25s all;
     }
-    .remove-board{
+    .item-content{
+        padding: 10px 15px;
+    }
+    .item-content p{
+        margin-top: 0;
+        text-align: left;
+    }
+    .item-date{
+        margin-right: 10px;
+        float: left;
+    }
+    .delete{
         background: #ff5747;
         border: 0;
         color: #fff;
     }
-    .edit-board-title{
+    .edit{
         background: #0090ff;
         border: 0;
         color: #fff;
+    }
+    .item-group{
+        overflow: auto;
+    }
+    .btn-group-right{
+        float: right;
+    }
+    .edit-title{
+        margin-top: 15px;
     }
 </style>
