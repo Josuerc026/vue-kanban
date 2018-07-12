@@ -10,32 +10,17 @@ export default {
   name: 'Projects',
   data: function () {
     return {
-      hello: ''
+      projects: ''
     }
+  },
+  mounted () {
+    this.fetchProjects()
   },
   methods: {
     async fetchProjects () {
       const response = await project.fetchProjects()
-      console.log(response)
+      console.log(response.data.projects)
     }
-    // async addProject () {
-    //   const response = await project.newProject({
-    //     project{
-    //       title:
-    //       board:{c
-    //         title:
-    //         item: {
-    //           date:
-    //           description:
-    //           checkMigrate:
-    //         }
-    //         tasksRemaining:
-    //         checkTitle:
-    //       }
-    //     }
-    //   })
-    //   console.log(response.data)
-    // }
   }
 }
 </script>
