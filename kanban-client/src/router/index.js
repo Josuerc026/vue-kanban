@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Kanban from '../components/kanban'
+import kanban from '../components/kanban'
 import Projects from '../components/Projects'
-import newProject from '../components/newProject'
 import Register from '../components/register'
 import Login from '../components/login'
 import LogOut from '../components/logout'
+import error from '../components/error'
 
 Vue.use(Router)
 
@@ -18,17 +18,12 @@ export default new Router({
       component: Projects
     },
     {
-      path: '/projects/new',
-      name: 'New Project',
-      component: newProject
-    },
-    {
-      path: '/board',
+      path: '/projects/:title',
       name: 'Kanban',
-      component: Kanban
+      component: kanban
     },
     {
-      path: '/register',
+      path: '/auth/:type',
       name: 'Register',
       component: Register
     },
@@ -41,6 +36,11 @@ export default new Router({
       path: '/logout',
       name: 'Logout',
       component: LogOut
+    },
+    {
+      path: '/404',
+      name: 'error',
+      component: error
     }
   ]
 })

@@ -5,6 +5,6 @@ export default {
     return Api().get('projects')
   },
   newProject (project) {
-    return Api().post('projects', project)
+    return Api().post('add_project', project)
   }
 }

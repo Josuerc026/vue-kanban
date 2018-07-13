@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+      <h1>{{$route.params.title.split('-').join(' ')}}</h1>
         <div class="kanban-wrap">
             <form v-on:submit.prevent="addTask($event)">
                 <fieldset>
@@ -184,6 +185,9 @@ export default {
 </script>
 
 <style scoped>
+    .kanban-wrap{
+      text-align: center;
+    }
     button{
         cursor: pointer;
     }

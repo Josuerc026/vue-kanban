@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import AuthServiceLogin from '../services/AuthenticationServiceLogin'
+import AuthServiceLogin from '../services/AuthenticationService'
 export default {
   name: 'login',
   data () {

@@ -19,9 +19,13 @@ export default {
   methods: {
     async logOut () {
       const response = await AuthLogout.logout()
+      console.log(response.data)
       if (response.data.success) {
         this.$router.push({
-          name: 'Login'
+          name: 'Register',
+          params: {
+            type: 'login'
+          }
         })
       }
     }

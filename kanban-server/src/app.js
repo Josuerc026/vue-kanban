@@ -118,18 +118,18 @@ app.post('/add_project', (req, res) => {
   let db = req.db
   User.findById(req.session.user._id, 'projects', (err, user) => {
     let reqObj = {
-      title: req.body.project.title,
+      title: req.body.title,
       lists: [{
-        title: req.body.project.board.title,
+        title: req.body.board.title,
         todoList: [
           {
-            date: req.body.project.board.item.date,
-            description: req.body.project.board.item.description,
-            checkMigrate: req.body.project.board.item.checkMigrate
+            date: req.body.board.item.date,
+            description: req.body.board.item.description,
+            checkMigrate: req.body.board.item.checkMigrate
           }
         ],
-        tasksRemaining: req.body.project.board.tasksRemaining,
-        checkTitle: req.body.project.board.checkTitle
+        tasksRemaining: req.body.board.tasksRemaining,
+        checkTitle: req.body.board.checkTitle
       }]
     }
     user.projects.push(reqObj)
