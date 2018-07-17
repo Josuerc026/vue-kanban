@@ -7,8 +7,8 @@ export default {
   newProject (project) {
     return Api().post('add_project', project)
   },
-  deleteProject (project) {
-    return Api().delete('projects', project)
+  removeProject (projectID) {
+    return Api().delete('projects/' + projectID)
   },
   fetchBoards (boardId) {
     return Api().post('boards', boardId)

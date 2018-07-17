@@ -110,7 +110,7 @@ app.post('/login', (req, res) => {
       req.session.user = user
       req.session.save((err) => {
         if (!err) {
-          console.log(req.session)
+          //console.log(req.session)
         }
       })
       return res.status(200).send({
@@ -174,7 +174,7 @@ app.post('/add_project', (req, res) => {
   })
 })
 app.get('/projects', (req, res) => {
-  console.log(req.session.user)
+  //console.log(req.session.user)
   if (!req.session.user) {
     return res.status(401).send()
   }
@@ -192,7 +192,7 @@ app.post('/boards', (req, res) => {
   User.findById({_id: req.session.user._id}, (err, user) => {
     if (err) { console.error(err) }
     let board = user.projects.filter(project => {
-      console.log('PROJECTS', project)
+      //console.log('PROJECTS', project)
       return project._id.equals(req.body.id)
     })
     res.send({
@@ -225,13 +225,15 @@ app.put('/projects/:id', (req, res) => {
     }
   })
 })
-app.delete('/projects', (req, res) => {
-  console.log('REQUEST', req.body.id)
+app.delete('/projects/:id', (req, res) => {
+  console.log('REQUEST', req.params)
   User.update({
     _id: req.session.user._id
   }, {
     $pull: {
-      projects: req.body.id
+      projects:{
+        _id: mongoose.Types.ObjectId(req.params.id)
+      }
     }
   }, (err, project) => {
     if (err) {
@@ -239,7 +241,7 @@ app.delete('/projects', (req, res) => {
     } else {
       res.status(200).send({
         success: true,
-        message: `successfully delete project ${req.body.id}`
+        message: `successfully delete project ${req.params.id}`
       })
     }
   })

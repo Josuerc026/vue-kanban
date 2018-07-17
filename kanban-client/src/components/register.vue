@@ -59,7 +59,15 @@ export default {
       })
     }
   },
-  created () {
+  beforeRouteUpdate (to, from, next) {
+    if (to.params.type === 'login') {
+      this.registerToggle = false
+      next()
+    } else {
+      next()
+    }
+  },
+  mounted () {
     this.login()
   },
   methods: {

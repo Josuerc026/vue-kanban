@@ -274,7 +274,8 @@ export default {
         padding-top: 30px;
     }
     .kanban-container > div{
-        flex-grow: 1;
+        width: 33.33%;
+        box-sizing: border-box;
         border: 1px solid #efefef;
         position: relative;
         padding: 10px 10px 5px 10px;
