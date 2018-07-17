@@ -6,5 +6,14 @@ export default {
   },
   newProject (project) {
     return Api().post('add_project', project)
+  },
+  deleteProject (project) {
+    return Api().delete('projects', project)
+  },
+  fetchBoards (boardId) {
+    return Api().post('boards', boardId)
+  },
+  updateBoards (params) {
+    return Api().put('projects/' + params.id, params)
   }
 }

@@ -15,7 +15,7 @@ const app = express()
 app.use(morgan('combined'))
 app.use(cors({
   origin: ['http://localhost:8080'],
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true // enable set cookie
 }))
 app.use(session({
@@ -41,7 +41,7 @@ app.post('/register', (req, res) => {
   let db = req.db
   let reqObj = {
     firstname: req.body.firstname,
-    lastname: req.body.lasttname,
+    lastname: req.body.lastname,
     username: req.body.username,
     password: req.body.password
   }
@@ -57,6 +57,29 @@ app.post('/register', (req, res) => {
       res.send({
         success: true,
         message: `User created!`
+      })
+    }
+  })
+})
+app.get('/user', (req, res) => {
+  if (!req.session.user) {
+    return res.status(500).send({
+      success: false
+    })
+  }
+  User.findById(req.session.user._id, (err, user) => {
+    if (err) {
+      console.log(err)
+      res.status(500).send({
+        success: false,
+        message: 'could not log in user'
+      })
+    } else {
+      res.status(200).send({
+        success: true,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        username: user.username
       })
     }
   })
@@ -156,23 +179,70 @@ app.get('/projects', (req, res) => {
     return res.status(401).send()
   }
   User.findById(req.session.user._id, 'projects', (err, projects) => {
-    console.log(projects)
     if (err) { console.error(err) }
     res.send({
       projects: projects
     })
   }).sort({_id: -1})
 })
-
-// app.delete('/wipe', (req, res) => {
-//   let db = req.db
-//   Project.remove({}, (err) => {
-//     if (err) {
-//       console.log(err)
-//     } else {
-//       res.end('successfully deleted all')
-//     }
-//   })
-// })
+app.post('/boards', (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).send()
+  }
+  User.findById({_id: req.session.user._id}, (err, user) => {
+    if (err) { console.error(err) }
+    let board = user.projects.filter(project => {
+      console.log('PROJECTS', project)
+      return project._id.equals(req.body.id)
+    })
+    res.send({
+      board: board
+    })
+  }).sort({_id: -1})
+})
+app.put('/projects/:id', (req, res) => {
+  // let db = req.db
+  User.findById(req.session.user._id, (err, user) => {
+    let board = user.projects.id(req.params.id)
+    if (err) {
+      console.log(err)
+      res.status(500).send({
+        success: false
+      })
+    } else {
+      board.lists = req.body.lists
+      user.markModified('projects')
+      user.save((err) => {
+        if (err) {
+          console.log(err)
+        } else {
+          res.status(200).send({
+            success: true,
+            message: 'Updated Boards!'
+          })
+        }
+      })
+    }
+  })
+})
+app.delete('/projects', (req, res) => {
+  console.log('REQUEST', req.body.id)
+  User.update({
+    _id: req.session.user._id
+  }, {
+    $pull: {
+      projects: req.body.id
+    }
+  }, (err, project) => {
+    if (err) {
+      console.log(err)
+    } else {
+      res.status(200).send({
+        success: true,
+        message: `successfully delete project ${req.body.id}`
+      })
+    }
+  })
+})
 
 app.listen(config)

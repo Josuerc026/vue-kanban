@@ -1,133 +1,162 @@
 <template>
+  <div>
+    <main-header></main-header>
     <div class="container">
-      <h1>{{$route.params.title.split('-').join(' ')}}</h1>
-        <div class="kanban-wrap">
-            <form v-on:submit.prevent="addTask($event)">
-                <fieldset>
-                    <div class="task-inputs">
-                        <input type="text" v-model="userTask" autocomplete="true" placeholder="Add Task...">
-                        <select ref="formSelect">
-                            <option v-for="(koptions, index) in lists" :key="koptions.id" :id="index">{{koptions.title}}</option>
-                        </select>
-                        <button type="submit" class="add-task">Add task</button>
-                    </div>
-                    <div class="board-inputs">
-                        <button type="button" @click="addBoard" class="add-board">Add Board</button>
-                    </div>
-                </fieldset>
-            </form>
-            <div class="kanban-container">
-                <div class="kanban" v-for="(kanban, index) in lists" :key="kanban.id">
-                    <div class="kanban-task-count" v-bind:class="{
+      <!--<h1>{{$route.params.title.split('-').join(' ')}}</h1>-->
+      <div class="kanban-wrap">
+        <form v-on:submit.prevent="addTask($event)">
+          <fieldset>
+            <div class="task-inputs">
+              <input type="text" v-model="userTask" autocomplete="true" placeholder="Add Task...">
+              <select ref="formSelect">
+                <option v-for="(koptions, index) in lists" :key="koptions.id" :id="index">{{koptions.title}}</option>
+              </select>
+              <button type="submit" class="add-task">Add task</button>
+            </div>
+            <div class="board-inputs">
+              <button type="button" @click="addBoard" class="add-board">Add Board</button>
+            </div>
+          </fieldset>
+        </form>
+        <div class="kanban-container">
+          <div class="kanban" v-for="(kanban, index) in lists" :key="kanban.id">
+            <div class="kanban-task-count" v-bind:class="{
                         warning: (kanban.todoList.length > 4) && (kanban.todoList.length < 7),
                         caution: (kanban.todoList.length >= 7)
                     }">
-                        <span>{{kanban.todoList.length}}</span>
-                    </div>
-                    <div v-if="kanban.checkTitle" class="edit-title">
-                        <input type="text" v-model="kanban.title">
-                        <button @click="editTitle(kanban)" class="edit">done</button>
-                    </div>
-                    <h3>
-                        {{kanban.title}}
-                        <div>
-                            <button @click="editTitle(kanban)" class="edit">edit</button>
-                            <button @click="removeBoard(index)" class="delete">Delete</button>
-                        </div>
-                    </h3>
-                    <ul>
-                        <li v-for="(item, index) in kanban.todoList" :key="item.id" class="list-item">
-                            <div class="item-content">
-                                <p>{{item.description}}</p>
-                                <div class="item-group">
-                                    <small class="item-date">{{item.date}}</small>
-                                    <div class="btn-group-right">
-                                        <button @click="migrateTask(item, null)" class="edit">Move</button>
-                                        <button @click="removeTask(kanban, index)" class="delete">Delete</button>
-                                    </div>
-                                </div>
-                                <div v-if="item.checkMigrate">
-                                    <select @change="moveTask($event,kanban,item, index)">
-                                        <option>Select Board</option>
-                                        <option v-for="(koptions, index) in lists" :key="koptions.id" :id="index">{{koptions.title}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+              <span>{{kanban.todoList.length}}</span>
             </div>
+            <div v-if="kanban.checkTitle" class="edit-title">
+              <input type="text" v-model="kanban.title">
+              <button @click="editTitle(kanban)" class="edit">done</button>
+            </div>
+            <h3>
+              {{kanban.title}}
+              <div>
+                <button @click="editTitle(kanban)" class="edit">edit</button>
+                <button @click="removeBoard(index)" class="delete">Delete</button>
+              </div>
+            </h3>
+            <ul>
+              <li v-for="(item, index) in kanban.todoList" :key="item.id" class="list-item">
+                <div class="item-content">
+                  <p>{{item.description}}</p>
+                  <div class="item-group">
+                    <small class="item-date">{{item.date}}</small>
+                    <div class="btn-group-right">
+                      <button @click="migrateTask(item, null)" class="edit">Move</button>
+                      <button @click="removeTask(kanban, index)" class="delete">Delete</button>
+                    </div>
+                  </div>
+                  <div v-if="item.checkMigrate">
+                    <select @change="moveTask($event,kanban,item, index)">
+                      <option>Select Board</option>
+                      <option v-for="(koptions, index) in lists" :key="koptions.id" :id="index">{{koptions.title}}</option>
+                    </select>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
+import mainHeader from '../components/MainHeader'
+import project from '../services/projectService'
 export default {
   name: 'kanban',
+  components: {
+    mainHeader
+  },
   data: function () {
     return {
       setWarning: false,
       setAlert: false,
       userTask: '',
       lists: [
-        {
-          title: 'Upcoming Tasks',
-          todoList: [
-            {
-              date: new Date().toLocaleDateString(),
-              description: 'Modify Header Component',
-              checkMigrate: false
-            },
-            {
-              date: new Date().toLocaleDateString(),
-              description: 'Discuss 2.1 Feature set',
-              checkMigrate: false
-            },
-            {
-              date: new Date().toLocaleDateString(),
-              description: 'Code Review - Front End',
-              checkMigrate: false
-            }
-          ],
-          tasksRemaining: 0,
-          checkTitle: false
-        },
-        {
-          title: 'Current Tasks',
-          todoList: [
-            {
-              date: new Date().toLocaleDateString(),
-              description: 'Code Review - Backend',
-              checkMigrate: false
-            }
-          ],
-          tasksRemaining: 0,
-          checkTitle: false
-        },
-        {
-          title: 'Completed Tasks',
-          todoList: [
-            {
-              date: new Date().toLocaleDateString(),
-              description: 'Translation Feature',
-              checkMigrate: false
-            },
-            {
-              date: new Date().toLocaleDateString(),
-              description: 'Accessibility Audit',
-              checkMigrate: false
-            }
-          ],
-          tasksRemaining: 0,
-          checkTitle: false
-        }
+        // {
+        //   title: 'Upcoming Tasks',
+        //   todoList: [
+        //     {
+        //       date: new Date().toLocaleDateString(),
+        //       description: 'Modify Header Component',
+        //       checkMigrate: false
+        //     },
+        //     {
+        //       date: new Date().toLocaleDateString(),
+        //       description: 'Discuss 2.1 Feature set',
+        //       checkMigrate: false
+        //     },
+        //     {
+        //       date: new Date().toLocaleDateString(),
+        //       description: 'Code Review - Front End',
+        //       checkMigrate: false
+        //     }
+        //   ],
+        //   tasksRemaining: 0,
+        //   checkTitle: false
+        // },
+        // {
+        //   title: 'Current Tasks',
+        //   todoList: [
+        //     {
+        //       date: new Date().toLocaleDateString(),
+        //       description: 'Code Review - Backend',
+        //       checkMigrate: false
+        //     }
+        //   ],
+        //   tasksRemaining: 0,
+        //   checkTitle: false
+        // },
+        // {
+        //   title: 'Completed Tasks',
+        //   todoList: [
+        //     {
+        //       date: new Date().toLocaleDateString(),
+        //       description: 'Translation Feature',
+        //       checkMigrate: false
+        //     },
+        //     {
+        //       date: new Date().toLocaleDateString(),
+        //       description: 'Accessibility Audit',
+        //       checkMigrate: false
+        //     }
+        //   ],
+        //   tasksRemaining: 0,
+        //   checkTitle: false
+        // }
       ]
     }
   },
   computed: {
 
   },
+  mounted () {
+    console.log(this.$route.params)
+    this.getBoards()
+  },
   methods: {
+    async updateBoards () {
+      const response = await project.updateBoards({
+        lists: this.lists,
+        id: this.$route.params.id
+      })
+      console.log(response.data)
+    },
+    async getBoards () {
+      const response = await project.fetchBoards({
+        id: this.$route.params.id
+      })
+      const projectBoards = response.data.board
+      console.log(projectBoards)
+      projectBoards[0].lists.forEach((item) => {
+        this.lists.push(item)
+      })
+    },
     addTask: function () {
     // - 0 to coerce to number
       let kanbanIndex = this.$refs.formSelect.options[this.$refs.formSelect.selectedIndex].id - 0
@@ -143,6 +172,7 @@ export default {
         description: input,
         checkMigrate: false
       })
+      this.updateBoards()
       env.userTask = ''
     },
     addBoard: function () {
@@ -152,14 +182,15 @@ export default {
         tasksRemaining: 0,
         checkTitle: false
       })
-      this.listCount()
+      this.updateBoards()
     },
     removeBoard: function (index) {
       this.lists.splice(index, 1)
-      this.listCount()
+      this.updateBoards()
     },
     migrateTask: function (item) {
       item.checkMigrate = !item.checkMigrate
+      this.updateBoards()
     },
     moveTask: function (e, currentBoard, item, itemIndex) {
       let kanbanIndex = (e.target.options[e.target.options.selectedIndex].id) - 0
@@ -167,19 +198,19 @@ export default {
       this.lists[kanbanIndex].todoList.push(item)
       this.removeTask(currentBoard, itemIndex)
       this.migrateTask(item)
+      this.updateBoards()
     },
     removeTask: function (board, index) {
       board.todoList.splice(index, 1)
+      this.updateBoards()
     },
     editTitle: function (board) {
       board.checkTitle = !board.checkTitle
-    },
-    listCount: function () {
-      this.$emit('list-count', this.lists.length)
+      this.updateBoards()
     }
   },
   beforeMount: function () {
-    this.listCount()
+    // this.listCount()
   }
 }
 </script>
