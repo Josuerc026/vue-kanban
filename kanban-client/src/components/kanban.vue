@@ -2,13 +2,14 @@
   <div>
     <main-header></main-header>
     <div class="container">
-      <!--<h1>{{$route.params.title.split('-').join(' ')}}</h1>-->
+      <router-link to="/projects">Back to Projects </router-link>
+      <h1>{{projectTitle}}</h1>
       <div class="kanban-wrap">
         <form v-on:submit.prevent="addTask($event)">
           <fieldset>
             <div class="task-inputs">
-              <input type="text" v-model="userTask" autocomplete="true" placeholder="Add Task...">
-              <select ref="formSelect">
+              <input type="text" v-model="userTask" autocomplete="true" placeholder="Add Task..." class="ni-input">
+              <select ref="formSelect" class="select-board">
                 <option v-for="(koptions, index) in lists" :key="koptions.id" :id="index">{{koptions.title}}</option>
               </select>
               <button type="submit" class="add-task">Add task</button>
@@ -59,6 +60,9 @@
             </ul>
           </div>
         </div>
+        <div v-if="isSaved.check" class="saved-prompt">
+          <h3>{{isSaved.msg}}</h3>
+        </div>
       </div>
     </div>
   </div>
@@ -77,59 +81,12 @@ export default {
       setWarning: false,
       setAlert: false,
       userTask: '',
-      lists: [
-        // {
-        //   title: 'Upcoming Tasks',
-        //   todoList: [
-        //     {
-        //       date: new Date().toLocaleDateString(),
-        //       description: 'Modify Header Component',
-        //       checkMigrate: false
-        //     },
-        //     {
-        //       date: new Date().toLocaleDateString(),
-        //       description: 'Discuss 2.1 Feature set',
-        //       checkMigrate: false
-        //     },
-        //     {
-        //       date: new Date().toLocaleDateString(),
-        //       description: 'Code Review - Front End',
-        //       checkMigrate: false
-        //     }
-        //   ],
-        //   tasksRemaining: 0,
-        //   checkTitle: false
-        // },
-        // {
-        //   title: 'Current Tasks',
-        //   todoList: [
-        //     {
-        //       date: new Date().toLocaleDateString(),
-        //       description: 'Code Review - Backend',
-        //       checkMigrate: false
-        //     }
-        //   ],
-        //   tasksRemaining: 0,
-        //   checkTitle: false
-        // },
-        // {
-        //   title: 'Completed Tasks',
-        //   todoList: [
-        //     {
-        //       date: new Date().toLocaleDateString(),
-        //       description: 'Translation Feature',
-        //       checkMigrate: false
-        //     },
-        //     {
-        //       date: new Date().toLocaleDateString(),
-        //       description: 'Accessibility Audit',
-        //       checkMigrate: false
-        //     }
-        //   ],
-        //   tasksRemaining: 0,
-        //   checkTitle: false
-        // }
-      ]
+      projectTitle: '',
+      isSaved: {
+        message: '',
+        check: false
+      },
+      lists: []
     }
   },
   computed: {
@@ -140,12 +97,21 @@ export default {
     this.getBoards()
   },
   methods: {
+    markSuccess (success, msg) {
+      this.isSaved.check = !this.isSaved.check
+      this.isSaved.msg = msg
+      setTimeout(() => {
+        this.isSaved.check = !this.isSaved.check
+      }, 2500)
+    },
     async updateBoards () {
       const response = await project.updateBoards({
         lists: this.lists,
         id: this.$route.params.id
       })
-      console.log(response.data)
+      if (response.data.success) {
+        this.markSuccess(response.data.success, response.data.message)
+      }
     },
     async getBoards () {
       const response = await project.fetchBoards({
@@ -153,6 +119,7 @@ export default {
       })
       const projectBoards = response.data.board
       console.log(projectBoards)
+      this.projectTitle = projectBoards[0].title
       projectBoards[0].lists.forEach((item) => {
         this.lists.push(item)
       })
@@ -257,6 +224,7 @@ export default {
     }
     .board-inputs{
         float: right;
+        padding: 15px 0;
     }
     .warning{
         background: yellow !important;
@@ -278,7 +246,7 @@ export default {
         box-sizing: border-box;
         border: 1px solid #efefef;
         position: relative;
-        padding: 10px 10px 5px 10px;
+        padding: 15px 15px 5px 15px;
     }
     .kanban-task-count{
         position: absolute;
@@ -306,8 +274,21 @@ export default {
     }
     .list-item{
         margin-bottom: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         transition: 0.25s all;
+        background: #fff;
+        position: relative;
+        border: 1px solid lightgray;
+    }
+    .list-item:after{
+      content: '';
+      display: block;
+      width: 100%;
+      position: absolute;
+      z-index: -1;
+      top: 9px;
+      left: -9px;
+      height: 100%;
+      background: #e4e4e4;
     }
     .item-content{
         padding: 10px 15px;
@@ -338,5 +319,36 @@ export default {
     }
     .edit-title{
         margin-top: 15px;
+    }
+    .saved-prompt{
+      position: absolute;
+      right: 15px;
+      bottom: 15px;
+      background: lightgreen;
+      padding: 5px 20px;
+      color: #3e653e;
+      animation: prompt-open 0.4s ease-in-out;
+    }
+    .ni-input{
+      box-sizing: border-box;
+      padding: 5px;
+      margin: 2.5% 0;
+      font-size: 1.15rem;
+      border: 0;
+      border-bottom: 1px solid #d1d1d1;
+    }
+    .select-board{
+      appearance: none;
+      padding: 10px 20px;
+      background: transparent;
+      border-radius: 0;
+    }
+    @keyframes prompt-open{
+      0%{
+        opacity: 0;
+      }
+      100%{
+        opacity: 1;
+      }
     }
 </style>

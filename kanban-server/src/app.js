@@ -218,7 +218,7 @@ app.put('/projects/:id', (req, res) => {
         } else {
           res.status(200).send({
             success: true,
-            message: 'Updated Boards!'
+            message: 'Saved Successfully!'
           })
         }
       })

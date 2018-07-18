@@ -12,7 +12,7 @@
         </div>
       </div>
       <div class="project-container">
-        <h1 class="text-white text-light">My Projects</h1>
+        <h1 class="">My Projects</h1>
         <!--<router-link to="/projects/new">New Project</router-link>-->
         <div class="add-project-wrap">
           <div class="new-project" v-if="npToggle">
@@ -137,7 +137,6 @@ export default {
     margin: 0;
   }
   .project-wrap{
-    background: linear-gradient(royalblue, #0090ff);
     height: 100%;
   }
   .project-container{
@@ -160,15 +159,37 @@ export default {
     padding: 20px;
     border-radius: 2.5px;
     text-decoration: none;
+    border: 1px solid lightgray;
+  }
+  .project-anchor:before{
+    content: '';
+    display: block;
+    width: 100%;
+    position: absolute;
+    z-index: -1;
+    top: 9px;
+    right: -9px;
+    height: 100%;
+    background: #e4e4e4;
   }
   .project-anchor > div{
   }
   .project-grid > .project-anchor{
     width: 30%;
+    margin-bottom: 15px;
   }
   .project-grid > .project-anchor:nth-child(3n - 1){
     margin-left: 5%;
     margin-right: 5%;
+  }
+  @media (max-width: 768px){
+    .project-grid > .project-anchor{
+      width: 100%;
+    }
+    .project-grid > .project-anchor:nth-child(3n - 1){
+      margin-left: 0;
+      margin-right: 0;
+    }
   }
   .sr-only {
     position: absolute;
@@ -181,17 +202,17 @@ export default {
     border: 0;
   }
   .add-project-wrap{
-    position: absolute;
+    position: fixed;
     bottom: 25px;
+    z-index: 999;
     right: 25px;
   }
   .add-project{
     width: 50px;
     height: 50px;
     border: 0;
-    background: #fff;
+    background: #ff5747;
     border-radius: 100%;
-    box-shadow: 0 5px 8px rgba(0,0,0,0.25);
   }
   .add-project:after{
     content: '+';
@@ -199,7 +220,7 @@ export default {
     position: relative;
     top: -2px;
     font-size: 1.7rem;
-    color: #ff5747;
+    color: #fff;
     transition: 0.25s all;
   }
   .add-project.on:after{
@@ -212,8 +233,7 @@ export default {
     bottom: 100%;
     background: #fff;
     width: 250px;
-    box-shadow: 0 5px 8px rgba(0,0,0,0.25);
-    border-radius: 5px;
+    border: 1px solid lightgray;
   }
   .new-project-container{
     padding: 20px;
@@ -239,7 +259,7 @@ export default {
     position: absolute;
     width: 100%;
     top: 0;
-    z-index: 999;
+    z-index: 9999;
     left: 0;
     height: 100%;
     background: rgba(0,0,0,0.35);
@@ -251,11 +271,11 @@ export default {
     width: 350px;
     position: absolute;
     top: 50%;
-    border-radius: 5px;
+    line-height: 25px;
     padding: 20px;
+    z-index: 0;
     left: 50%;
     transform: translate(-50%,-50%);
-    box-shadow: 0 5px 8px rgba(0,0,0,0.25);
   }
   .prompt-btns{
     margin-top: 10px;
@@ -269,7 +289,7 @@ export default {
   .delete-project{
     position: absolute;
     top: -10px;
-    right: -10px;
+    left: -10px;
     width: 25px;
     height: 25px;
     border-radius: 100%;
@@ -277,6 +297,7 @@ export default {
     border: 0;
     font-weight: bold;
     background: #ff5747;
+    cursor: pointer;
   }
   @keyframes prompt-open{
     0%{
