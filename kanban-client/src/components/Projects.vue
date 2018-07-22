@@ -1,6 +1,6 @@
 <template>
     <div class="project-wrap">
-      <main-header></main-header>
+      <main-header v-on:user-info="getUserInfo"></main-header>
       <div class="delete-popup" v-if="delCheck.toggle">
         <div class="delete-popup-content text-center">
           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Caution_icon_-_Noun_Project_9556_white.svg/1024px-Caution_icon_-_Noun_Project_9556_white.svg.png" class="prompt-img">
@@ -11,30 +11,49 @@
           </div>
         </div>
       </div>
-      <div class="project-container">
-        <h1 class="">My Projects</h1>
-        <!--<router-link to="/projects/new">New Project</router-link>-->
-        <div class="add-project-wrap">
-          <div class="new-project" v-if="npToggle">
-            <div class="new-project-container">
-              <h3 class="no-margin">Add a new project</h3>
-              <p>A board and list will be generated once you're in the project to get you started.</p>
-              <input type="text" class="np-input" v-model="newProject.title" @keyup.enter="addProject" placeholder="Project Name">
-              <button @click="addProject" class="delete">Add Project</button>
+        <div class="project-container">
+          <div class="project-flex-container">
+            <div class="user-dash">
+              <div class="user-content">
+                <h3>My Info</h3>
+                <p>{{user.first}} {{user.last ? user.last : '🤐'}}</p>
+                <p>{{user.username}}</p>
+              </div>
+              <div class="pb-stats">
+                <div class="project-stats">
+                  <p><strong>{{projects.length}}</strong> Projects</p>
+                </div>
+                <div class="board-stats">
+                  <p> <strong>{{totalBoards}}</strong> Boards</p>
+                </div>
+              </div>
+            </div>
+            <div class="project-dash">
+              <h1 class="main-heading">My Projects</h1>
+              <!--<router-link to="/projects/new">New Project</router-link>-->
+              <div class="project-grid">
+                <router-link v-for="project in projects" :key="project.id" :to="{name:'Kanban', params:{title: project.title.toLowerCase().split(' ').join('-'), id: project._id}}" class="project-anchor pos-relative">
+                  <div>
+                    <h3 class="no-margin project-title">{{project.title}}</h3>
+                    <small class="project-details">{{project.lists.length}} {{project.lists.length > 1 ? 'Boards' : 'Board'}}</small>
+                    <button class="delete-project" v-on:click.prevent="checkDelete(project._id, project.title)"><span class="sr-only">Delete Project</span>X</button>
+                  </div>
+                </router-link>
+              </div>
+              <div class="add-project-wrap">
+                <div class="new-project" v-if="npToggle">
+                  <div class="new-project-container">
+                    <h3 class="no-margin">Add a new project</h3>
+                    <p>A board and list will be generated once you're in the project to get you started.</p>
+                    <input type="text" class="np-input" v-model="newProject.title" @keyup.enter="addProject" placeholder="Project Name">
+                    <button @click="addProject" class="delete">Add Project</button>
+                  </div>
+                </div>
+                <button @click="npToggle = !npToggle" class="add-project" :class="{on: npToggle}"><span class="sr-only">Add new</span></button>
+              </div>
             </div>
           </div>
-          <button @click="npToggle = !npToggle" class="add-project" :class="{on: npToggle}"><span class="sr-only">Add new</span></button>
         </div>
-        <div class="project-grid">
-          <router-link v-for="project in projects" :key="project.id" :to="{name:'Kanban', params:{title: project.title.toLowerCase().split(' ').join('-'), id: project._id}}" class="project-anchor pos-relative">
-            <div>
-              <h3 class="no-margin project-title">{{project.title}}</h3>
-              <small>{{project.lists.length}} {{project.lists.length > 1 ? 'boards' : 'board'}} in this project</small>
-              <button class="delete-project" v-on:click.prevent="checkDelete(project._id, project.title)"><span class="sr-only">Delete Project</span>X</button>
-            </div>
-          </router-link>
-        </div>
-      </div>
     </div>
 </template>
 
@@ -50,6 +69,12 @@ export default {
     return {
       projects: [],
       npToggle: false,
+      totalBoards: 0,
+      user: {
+        first: '',
+        last: '',
+        username: ''
+      },
       delCheck: {
         toggle: false,
         name: '',
@@ -74,13 +99,20 @@ export default {
     this.fetchProjects()
   },
   methods: {
+    getUserInfo (user) {
+      this.user.first = user.first
+      this.user.last = user.last
+      this.user.username = user.username
+    },
     async fetchProjects () {
       const response = await project.fetchProjects()
       this.projects = response.data.projects.projects
-      console.log(this.projects)
       if (this.projects.length < 4) {
         this.npToggle = true
       }
+      this.totalBoards = this.projects.reduce((acc, project) => {
+        return acc + project.lists.length
+      }, 0)
     },
     async addProject () {
       const newProject = this.newProject
@@ -111,8 +143,29 @@ export default {
 </script>
 
 <style scoped>
+  .project-flex-container{
+    display: flex;
+    flex-flow: row;
+  }
+  .project-flex-container > .user-dash{
+    width: 20%;
+    position: relative;
+    border: 1px solid lightgray;
+  }
+  .user-content{
+    padding: 0 25px;
+  }
+  .project-flex-container > .project-dash{
+    width: 80%;
+    padding: 0 25px;
+    padding-bottom: 75px;
+  }
   .pos-relative{
     position: relative;
+  }
+  .main-heading{
+    margin-top: 0;
+    margin-bottom: 30px;
   }
   .prompt-img{
     width: 50px;
@@ -128,7 +181,8 @@ export default {
   }
   .project-title{
     font-size: 1.35rem;
-    font-weight: bold;
+    font-weight: normal;
+    margin-bottom: 25px !important;
   }
   .text-white{
     color: #fff;
@@ -298,6 +352,32 @@ export default {
     font-weight: bold;
     background: #ff5747;
     cursor: pointer;
+  }
+  .project-details{
+    position: absolute;
+    width: 100%;
+    padding: 5px 0;
+    display: block;
+    left: 0;
+    bottom: 0;
+    background: royalblue;
+    color: #fff;
+  }
+  .pb-stats{
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+  .pb-stats > div{
+    flex: 1;
+    background: lightgray;
+    color: #737373;
+    text-align: center;
+  }
+  .pb-stats > div > p > strong{
+    display: block;
+    font-size: 1.3rem;
   }
   @keyframes prompt-open{
     0%{

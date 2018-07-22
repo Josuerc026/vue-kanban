@@ -28,7 +28,13 @@ app.use(session({
 app.use(bodyParser.json())
 
 let mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost:27017/users').catch(function (reason) {
+let dbConnect = process.env.MONGODB_URI ||'mongodb://localhost:27017/users'
+mongoose.connect(dbConnect, {
+  server: {
+    reconnectTries: Number.MAX_VALUE,
+    reconnectInterval: 1000
+  }
+}).catch(function (reason) {
   console.log('Unable to connect to the mongodb instance. Error: ', reason)
 })
 let db = mongoose.connection
@@ -110,7 +116,7 @@ app.post('/login', (req, res) => {
       req.session.user = user
       req.session.save((err) => {
         if (!err) {
-          //console.log(req.session)
+          // console.log(req.session)
         }
       })
       return res.status(200).send({
@@ -174,7 +180,7 @@ app.post('/add_project', (req, res) => {
   })
 })
 app.get('/projects', (req, res) => {
-  //console.log(req.session.user)
+  // console.log(req.session.user)
   if (!req.session.user) {
     return res.status(401).send()
   }
@@ -192,7 +198,7 @@ app.post('/boards', (req, res) => {
   User.findById({_id: req.session.user._id}, (err, user) => {
     if (err) { console.error(err) }
     let board = user.projects.filter(project => {
-      //console.log('PROJECTS', project)
+      // console.log('PROJECTS', project)
       return project._id.equals(req.body.id)
     })
     res.send({
@@ -231,7 +237,7 @@ app.delete('/projects/:id', (req, res) => {
     _id: req.session.user._id
   }, {
     $pull: {
-      projects:{
+      projects: {
         _id: mongoose.Types.ObjectId(req.params.id)
       }
     }

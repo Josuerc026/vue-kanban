@@ -42,9 +42,17 @@ export default {
   methods: {
     async getUser () {
       const response = await User.getUser()
-      this.firstname = response.data.firstname
-      this.lastname = response.data.lastname
-      this.username = response.data.username
+      let userInfo = {
+        first: response.data.firstname,
+        last: response.data.lastname,
+        username: response.data.username
+      }
+
+      this.firstname = userInfo.first
+      this.lastname = userInfo.last
+      this.username = userInfo.username
+
+      this.$emit('user-info', userInfo)
     },
     async logOut () {
       const response = await AuthLogout.logout()
