@@ -1,6 +1,6 @@
 <template>
     <div class="project-wrap">
-      <main-header v-on:user-info="getUserInfo"></main-header>
+      <main-header v-on:user-info="getUserInfo" v-bind:nameUpdated="updatedName"></main-header>
       <div class="delete-popup" v-if="delCheck.toggle">
         <div class="delete-popup-content text-center">
           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Caution_icon_-_Noun_Project_9556_white.svg/1024px-Caution_icon_-_Noun_Project_9556_white.svg.png" class="prompt-img">
@@ -15,9 +15,20 @@
           <div class="project-flex-container">
             <div class="user-dash">
               <div class="user-content">
-                <h3>My Info</h3>
-                <p>{{user.first}} {{user.last ? user.last : '🤐'}}</p>
-                <p>{{user.username}}</p>
+                <div class="user-icon">
+                  {{user.first ? user.first[0] : '?' }}{{ user.last ? user.last[0].toUpperCase() : '?' }}
+                </div>
+                <br>
+                <div>
+                  <div v-if="!userToggles.name">
+                    <div>{{user.first}} {{user.last ? user.last : '🤐'}} <button @click="userToggles.name = !userToggles.name">Edit</button></div>
+                  </div>
+                  <div v-else>
+                    <input name="first" v-model="user.first" v-bind:placeholder="user.first"><input name="last" v-model="user.last" v-bind:placeholder="user.last"><button @click="updateName">Update</button><button @click="userToggles.name = !userToggles.name">Edit</button>
+                  </div>
+                  <br>
+                  <div>{{user.username}} <button>Edit</button></div>
+                </div>
               </div>
               <div class="pb-stats">
                 <div class="project-stats">
@@ -60,6 +71,8 @@
 <script>
 import mainHeader from '../components/MainHeader'
 import project from '../services/projectService'
+import User from '../services/UserService'
+
 export default {
   name: 'Projects',
   components: {
@@ -69,6 +82,11 @@ export default {
     return {
       projects: [],
       npToggle: false,
+      updatedName: false,
+      userToggles: {
+        name: false,
+        username: false
+      },
       totalBoards: 0,
       user: {
         first: '',
@@ -103,6 +121,19 @@ export default {
       this.user.first = user.first
       this.user.last = user.last
       this.user.username = user.username
+    },
+    async updateName () {
+      const response = await User.updateUser({
+        firstname: this.user.first,
+        lastname: this.user.last
+      })
+      if (response.data.success) {
+        this.updatedName = true
+      }
+      this.userToggles.name = !this.userToggles.name
+      setTimeout(() => {
+        this.updatedName = false
+      }, 500)
     },
     async fetchProjects () {
       const response = await project.fetchProjects()
@@ -153,6 +184,7 @@ export default {
     border: 1px solid lightgray;
   }
   .user-content{
+    text-align: center;
     padding: 0 25px;
   }
   .project-flex-container > .project-dash{
@@ -378,6 +410,19 @@ export default {
   .pb-stats > div > p > strong{
     display: block;
     font-size: 1.3rem;
+  }
+  .user-icon{
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    margin: 0 auto;
+    border-radius: 100%;
+    background: royalblue;
+    color: #fff;
+    box-sizing: border-box;
+    position: relative;
+    padding: 15px;
+    margin-top: 15px;
   }
   @keyframes prompt-open{
     0%{

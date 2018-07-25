@@ -28,7 +28,7 @@ app.use(session({
 app.use(bodyParser.json())
 
 let mongoose = require('mongoose')
-let dbConnect = process.env.MONGODB_URI ||'mongodb://localhost:27017/users'
+let dbConnect = process.env.MONGODB_URI || 'mongodb://localhost:27017/users'
 mongoose.connect(dbConnect, {
   server: {
     reconnectTries: Number.MAX_VALUE,
@@ -88,6 +88,34 @@ app.get('/user', (req, res) => {
         username: user.username
       })
     }
+  })
+})
+app.put('/user', (req, res) => {
+  if (!req.session.user) {
+    return res.status(500).send({
+      success: false
+    })
+  }
+  User.findById(req.session.user._id, (err, user) => {
+    if (err) {
+      console.log(err)
+      res.status(500).send({
+        success: false,
+        message: 'could not find user'
+      })
+    }
+    user.firstname = req.body.firstname
+    user.lastname = req.body.lastname
+    user.save((error) => {
+      if (error) {
+        console.log(error)
+      } else {
+        res.status(200).send({
+          success: true,
+          message: 'Updated!'
+        })
+      }
+    })
   })
 })
 app.post('/login', (req, res) => {

@@ -11,8 +11,9 @@
                       <button class="user-toggle" @click="userToggle = !userToggle">{{ firstname }}</button>!
                     </span>
                     <div class="user-info" v-if="userToggle">
-                      <img src="https://www.shareicon.net/data/128x128/2015/12/01/680532_face_512x512.png" width="50" height="50">
-                      <p class="no-margin">{{ firstname }} {{ lastname }}</p>
+                      <div class="user-icon">
+                        {{firstname ? firstname[0].toUpperCase() : 'null'}}{{lastname ? lastname[0].toUpperCase() : 'null'}}
+                      </div>                      <p class="no-margin">{{ firstname }} {{ lastname }}</p>
                       <p class="no-margin">{{ username }}</p>
                       <button @click="logOut" class="log-out delete">Log out</button>
                     </div>
@@ -27,13 +28,20 @@ import User from '../services/UserService'
 import AuthLogout from '../services/AuthenticationLogout'
 export default {
   name: 'mainHeader',
-  props: ['itemCount'],
+  props: ['nameUpdated'],
   data () {
     return {
       firstname: '',
       lastname: '',
       username: '',
       userToggle: false
+    }
+  },
+  watch: {
+    nameUpdated (n, o) {
+      if (n) {
+        this.getUser()
+      }
     }
   },
   mounted () {
@@ -144,5 +152,20 @@ export default {
     margin-top: 10px;
     padding: 5px 20px;
     font-size: 1rem;
+  }
+  .user-icon{
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    margin: 0 auto;
+    border-radius: 100%;
+    background: royalblue;
+    color: #fff;
+    box-sizing: border-box;
+    position: relative;
+    padding: 15px;
+    margin-top: 15px;
+    font-weight: lighter;
+    margin-bottom: 15px;
   }
 </style>
