@@ -16,7 +16,7 @@
             <div class="user-dash">
               <div class="user-content">
                 <div class="user-icon">
-                  {{user.first ? user.first[0] : '?' }}{{ user.last ? user.last[0].toUpperCase() : '?' }}
+                  {{user.first ? user.first[0].toUpperCase() : '?' }}{{ user.last ? user.last[0].toUpperCase() : '?' }}
                 </div>
                 <br>
                 <div>
@@ -27,7 +27,7 @@
                     <input name="first" v-model="user.first" v-bind:placeholder="user.first"><input name="last" v-model="user.last" v-bind:placeholder="user.last"><button @click="updateName">Update</button><button @click="userToggles.name = !userToggles.name">Edit</button>
                   </div>
                   <br>
-                  <div>{{user.username}} <button>Edit</button></div>
+                  <div>{{user.username}}</div>
                 </div>
               </div>
               <div class="pb-stats">
@@ -185,12 +185,11 @@ export default {
   }
   .user-content{
     text-align: center;
-    padding: 0 25px;
+    padding: 0 25px 100px 25px;
   }
   .project-flex-container > .project-dash{
     width: 80%;
     padding: 0 25px;
-    padding-bottom: 75px;
   }
   .pos-relative{
     position: relative;

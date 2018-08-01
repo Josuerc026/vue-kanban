@@ -1,19 +1,19 @@
 <template>
     <header>
         <div class="container pos-relative">
-            <div class="overflow-auto">
+            <div class="overflow-auto flex-between">
                 <div class="logo">
                     <img src="https://cdn.onlinewebfonts.com/svg/img_561956.png" alt="kanban project">
                 </div>
                 <div class="item-count align-right">
                     <span>Happy {{ new Date().toLocaleString('en-us', {  weekday: 'long' }) }},
-                      <br>
                       <button class="user-toggle" @click="userToggle = !userToggle">{{ firstname }}</button>!
                     </span>
                     <div class="user-info" v-if="userToggle">
                       <div class="user-icon">
                         {{firstname ? firstname[0].toUpperCase() : 'null'}}{{lastname ? lastname[0].toUpperCase() : 'null'}}
-                      </div>                      <p class="no-margin">{{ firstname }} {{ lastname }}</p>
+                      </div>
+                      <p class="no-margin">{{ firstname }} {{ lastname }}</p>
                       <p class="no-margin">{{ username }}</p>
                       <button @click="logOut" class="log-out delete">Log out</button>
                     </div>
@@ -96,6 +96,11 @@ export default {
       background: #fff;
       border-bottom: 3px solid royalblue;
   }
+  .flex-between{
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+  }
   .container{
       width: 75%;
       height: auto;
@@ -106,14 +111,12 @@ export default {
       overflow: auto;
   }
   .logo{
-      float: left;
       height: 100%;
       padding: 5px 0;
   }
   .item-count{
-      float: right;
       font-weight: bold;
-      padding: 5px 0;
+      padding: 15px 0;
   }
   .item-count .item{
       font-size:1.2rem;

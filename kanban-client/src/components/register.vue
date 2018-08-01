@@ -10,7 +10,8 @@
             <input type="text" placeholder="Last Name" name="lastname" v-model="lastname">
             <input type="text" placeholder="username" name="email" v-model="username">
             <input type="password" name="password" placeholder="password" v-model="password">
-            <button class="btn" @click="register">Register</button> or
+            <input type="password" name="confirm-password" placeholder="Confirm Password" @keyup="confirmPass($event)">
+            <button class="btn" @click="register" :disabled="!validatePass">Register</button> or
             <button class="btn-alt" @click="setType">Login</button>
           </div>
           <div v-else class="form login">
@@ -36,6 +37,7 @@ export default {
       lastname: '',
       username: '',
       password: '',
+      validatePass: false,
       registerToggle: true
     }
   },
@@ -67,6 +69,13 @@ export default {
     this.login()
   },
   methods: {
+    confirmPass (e) {
+      if (e.target.value === this.password) {
+        this.validatePass = true
+      } else {
+        this.validatePass = false
+      }
+    },
     setType () {
       this.registerToggle = !this.registerToggle
       this.$router.push({
@@ -112,6 +121,9 @@ export default {
   .no-margin{
     margin: 0;
   }
+  .btn:disabled{
+    opacity: 0.5;
+  }
   .btn{
     background: #ff5747;
     padding: 15px 30px;
@@ -121,9 +133,9 @@ export default {
     font-size: 1.2rem;
   }
   .btn-alt{
-    background: #d1d1d1;
+    background: #0090ff;
     padding: 15px 30px;
-    color: #6f6f6f;
+    color: #fff;
     border: 0;
     margin-top: 15px;
     font-size: 1.2rem;
