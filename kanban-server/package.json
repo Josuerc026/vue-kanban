@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-//  "start": "nodemon src/app.js --exec  \"npm run lint && node\"",
-    "start": "node src/app.js",
+    "start": "nodemon src/app.js --exec  \"npm run lint && node\"",
     "lint": "eslint src/**/*.js",
     "lint:fix": "eslint src/**/*.rjs  --fix",
     "seed": "node seed"
@@ -19,9 +18,7 @@
     "express": "^4.15.4",
     "express-session": "^1.15.6",
     "mongoose": "^5.1.7",
-    "morgan": "^1.8.2"
-  },
-  "devDependencies": {
+    "morgan": "^1.8.2",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-node": "^5.1.1",
@@ -29,5 +26,6 @@
     "eslint-plugin-standard": "^3.0.1",
     "eslint": "^4.6.0",
     "nodemon": "^1.11.0"
-  }
+  },
+  "devDependencies": {}
 }
