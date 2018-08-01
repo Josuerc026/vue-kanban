@@ -14,7 +14,7 @@ const User = require('./models/User')
 const app = express()
 app.use(morgan('combined'))
 app.use(cors({
-  origin: ['http://localhost:8080'],
+  origin: ['http://josuearce.com'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true // enable set cookie
 }))
