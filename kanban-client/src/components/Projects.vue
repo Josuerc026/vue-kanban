@@ -21,10 +21,10 @@
                 <br>
                 <div>
                   <div v-if="!userToggles.name">
-                    <div>{{user.first}} {{user.last ? user.last : '🤐'}} <button @click="userToggles.name = !userToggles.name">Edit</button></div>
+                    <div>{{user.first}} {{user.last ? user.last : '🤐'}} <button @click="userToggles.name = !userToggles.name" class="delete-sm">Edit</button></div>
                   </div>
                   <div v-else>
-                    <input name="first" v-model="user.first" v-bind:placeholder="user.first"><input name="last" v-model="user.last" v-bind:placeholder="user.last"><button @click="updateName">Update</button><button @click="userToggles.name = !userToggles.name">Edit</button>
+                    <input name="first" v-model="user.first" v-bind:placeholder="user.first"><input name="last" v-model="user.last" v-bind:placeholder="user.last"><button @click="updateName">Update</button> <button @click="userToggles.name = !userToggles.name">Close</button>
                   </div>
                   <br>
                   <div>{{user.username}}</div>
@@ -41,11 +41,14 @@
             </div>
             <div class="project-dash">
               <h1 class="main-heading">My Projects</h1>
-              <!--<router-link to="/projects/new">New Project</router-link>-->
+              <div v-if="projects.length == 0" class="empty-project-box">
+                  <h3>Well this is uneventful... Maybe try adding a project? <span>🤷</span></h3>
+              </div>
               <div class="project-grid">
                 <router-link v-for="project in projects" :key="project.id" :to="{name:'Kanban', params:{title: project.title.toLowerCase().split(' ').join('-'), id: project._id}}" class="project-anchor pos-relative">
                   <div>
                     <h3 class="no-margin project-title">{{project.title}}</h3>
+                    <h5 class="project-id">id: {{project._id}}</h5>
                     <small class="project-details">{{project.lists.length}} {{project.lists.length > 1 ? 'Boards' : 'Board'}}</small>
                     <button class="delete-project" v-on:click.prevent="checkDelete(project._id, project.title)"><span class="sr-only">Delete Project</span>X</button>
                   </div>
@@ -54,7 +57,7 @@
               <div class="add-project-wrap">
                 <div class="new-project" v-if="npToggle">
                   <div class="new-project-container">
-                    <h3 class="no-margin">Add a new project</h3>
+                    <h3 class="no-margin">Add a new project 🎉</h3>
                     <p>A board and list will be generated once you're in the project to get you started.</p>
                     <input type="text" class="np-input" v-model="newProject.title" @keyup.enter="addProject" placeholder="Project Name">
                     <button @click="addProject" class="delete">Add Project</button>
@@ -187,6 +190,9 @@ export default {
     text-align: center;
     padding: 0 25px 100px 25px;
   }
+  .user-content input{
+    width: 100%;
+  }
   .project-flex-container > .project-dash{
     width: 80%;
     padding: 0 25px;
@@ -213,6 +219,11 @@ export default {
   .project-title{
     font-size: 1.35rem;
     font-weight: normal;
+  }
+  .project-id{
+    color: #989898;
+    word-wrap: break-word;
+    margin-top: 5px;
     margin-bottom: 25px !important;
   }
   .text-white{
@@ -331,6 +342,12 @@ export default {
     padding: 5px 20px;
     font-size: 1rem;
   }
+  .delete-sm{
+    background: #ff5747;
+    border: 0;
+    color: #fff;
+    padding: 5px 10px;
+  }
   .np-input{
     width: 100%;
     box-sizing: border-box;
@@ -422,6 +439,17 @@ export default {
     position: relative;
     padding: 15px;
     margin-top: 15px;
+  }
+  .empty-project-box{
+    width: 100%;
+    background: #f1f0f0;
+    color: #757474;
+    padding: 10px 20px;
+    text-align: center;
+    border: 5px dotted #bfbdbd;
+  }
+  .empty-project-box span{
+    font-size: 2rem;
   }
   @keyframes prompt-open{
     0%{

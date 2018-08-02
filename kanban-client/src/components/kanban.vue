@@ -2,7 +2,7 @@
   <div>
     <main-header></main-header>
     <div class="container">
-      <router-link to="/projects">Back to Projects </router-link>
+      <router-link to="/projects"><span class="sr-only">Back to Projects</span></router-link>
       <h1>{{projectTitle}}</h1>
       <div class="kanban-wrap">
         <form v-on:submit.prevent="addTask($event)">
@@ -217,7 +217,8 @@ export default {
         width: 75%;
         height: auto;
         margin: 0 auto;
-        padding: 10px
+        padding: 10px;
+        position: relative;
     }
     .task-inputs{
         float: left;
@@ -342,6 +343,37 @@ export default {
       padding: 10px 20px;
       background: transparent;
       border-radius: 0;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      border: 0;
+    }
+    .router-link-active{
+      position: absolute;
+      left: -75px;
+      width: 25px;
+      height: 25px;
+      display: block;
+      text-decoration: none;
+    }
+    .router-link-active:before{
+      content: '\27AD';
+      display: block;
+      -moz-transform: scale(-1, -1);
+      -o-transform: scale(-1, -1);
+      -webkit-transform: scale(-1, -1);
+      transform: scale(-1, -1);
+      font-size: 3rem;
+      color: #000;
+    }
+    .router-link-active:after{
+      content: 'back';
     }
     @keyframes prompt-open{
       0%{
