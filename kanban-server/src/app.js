@@ -13,8 +13,15 @@ const User = require('./models/User')
 
 const app = express()
 app.use(morgan('combined'))
+const whitelist = ['https://josuearce.com', 'http://localhost:8080'];
 app.use(cors({
-  origin: ['https://josuearce.com'],
+  origin: (origin, cb) => {
+    if (whitelist.indexOf(origin) !== -1) {
+      cb(null, true)
+    } else {
+      cb(new Error('Not Allowed by CORS'))
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true // enable set cookie
 }))
