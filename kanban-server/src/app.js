@@ -13,7 +13,7 @@ const User = require('./models/User')
 
 const app = express()
 app.use(morgan('combined'))
-const whitelist = ['https://josuearce.com', 'http://localhost:8080'];
+const whitelist = ['https://josuearce.com', 'http://localhost:8080', 'https://www.klapp.josuearce.com'];
 app.use(cors({
   origin: (origin, cb) => {
     if (whitelist.indexOf(origin) !== -1) {
