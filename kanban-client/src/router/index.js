@@ -3,14 +3,19 @@ import Router from 'vue-router'
 import kanban from '../components/kanban'
 import Projects from '../components/Projects'
 import Register from '../components/register'
-import LogOut from '../components/logout'
 import error from '../components/error'
+import Home from '../components/home'
 
 Vue.use(Router)
 
 export default new Router({
   mode: 'history',
   routes: [
+    {
+      path: '/',
+      name: 'Home',
+      component: Home
+    },
     {
       path: '/projects',
       name: 'Projects',
@@ -25,11 +30,6 @@ export default new Router({
       path: '/auth/:type',
       name: 'Register',
       component: Register
-    },
-    {
-      path: '/logout',
-      name: 'Logout',
-      component: LogOut
     },
     {
       path: '/404',

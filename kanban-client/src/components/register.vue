@@ -3,8 +3,8 @@
     <div class="main-area">
       <div class="main-area-content">
         <div class="centered">
-          <h1 class="no-margin">{{$route.params.type[0].toUpperCase() + $route.params.type.slice(1)}}</h1>
-          <p>{{ $route.params.type === 'register' ? 'Sign up' : 'Log in to Kanban Lite' }} to get access to your projects, boards and more.</p>
+          <h1 class="no-margin">{{ typeTitle }}</h1>
+          <p>{{ $route.params.type === 'Register' ? 'Sign up' : 'Log in to Kanban Lite' }} to get access to your projects, boards and more.</p>
           <div class="form register" v-if="registerToggle">
             <input type="text" placeholder="First Name" name="firstname" v-model="firstname">
             <input type="text" placeholder="Last Name" name="lastname" v-model="lastname">
@@ -37,6 +37,7 @@ export default {
       lastname: '',
       username: '',
       password: '',
+      typeTitle: '',
       validatePass: false,
       registerToggle: true
     }
@@ -45,10 +46,13 @@ export default {
     if (to.params.type === 'login' || to.params.type === 'register') {
       if (to.params.type === 'login') {
         next(vm => {
+          vm.typeTitle = to.params.type[0].toUpperCase() + to.params.type.slice(1)
           vm.registerToggle = !vm.registerToggle
         })
       } else {
-        next()
+        next(vm => {
+          vm.typeTitle = to.params.type[0].toUpperCase() + to.params.type.slice(1)
+        })
       }
     } else {
       next({
@@ -58,6 +62,7 @@ export default {
     }
   },
   beforeRouteUpdate (to, from, next) {
+    this.typeTitle = to.params.type[0].toUpperCase() + to.params.type.slice(1)
     if (to.params.type === 'login') {
       this.registerToggle = false
       next()
@@ -184,8 +189,5 @@ export default {
     box-shadow: 10px 5px 0 rgba(0,0,0,0.5);
     padding: 30px;
     border: 1px solid lightgray;
-  }
-  .centered{
-
   }
 </style>

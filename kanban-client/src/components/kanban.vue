@@ -21,10 +21,7 @@
         </form>
         <div class="kanban-container">
           <div class="kanban" v-for="(kanban, index) in lists" :key="kanban.id">
-            <div class="kanban-task-count" v-bind:class="{
-                        warning: (kanban.todoList.length > 4) && (kanban.todoList.length < 7),
-                        caution: (kanban.todoList.length >= 7)
-                    }">
+            <div class="kanban-task-count" v-bind:class="switchColors(kanban)">
               <span>{{kanban.todoList.length}}</span>
             </div>
             <div v-if="kanban.checkTitle" class="edit-title">
@@ -86,11 +83,18 @@ export default {
         message: '',
         check: false
       },
-      lists: []
+      lists: [],
+      warning: false,
+      caution: false
     }
   },
   computed: {
-
+    switchColors (kanban) {
+      return {
+        warning: (kanban.todoList.length > 4) && (kanban.todoList.length < 7),
+        caution: (kanban.todoList.length >= 7)
+      }
+    }
   },
   mounted () {
     console.log(this.$route.params)
@@ -175,9 +179,6 @@ export default {
       board.checkTitle = !board.checkTitle
       this.updateBoards()
     }
-  },
-  beforeMount: function () {
-    // this.listCount()
   }
 }
 </script>

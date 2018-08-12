@@ -6,12 +6,12 @@
                     <img src="https://cdn.onlinewebfonts.com/svg/img_561956.png" alt="kanban project">
                 </div>
                 <div class="item-count align-right">
-                    <span>Happy {{ new Date().toLocaleString('en-us', {  weekday: 'long' }) }},
+                    <span>Happy {{ date }},
                       <button class="user-toggle" @click="userToggle = !userToggle">{{ firstname }}</button>!
                     </span>
                     <div class="user-info" v-if="userToggle">
                       <div class="user-icon">
-                        {{firstname ? firstname[0].toUpperCase() : 'null'}}{{lastname ? lastname[0].toUpperCase() : 'null'}}
+                        {{firstname}}{{lastname}}
                       </div>
                       <p class="no-margin">{{ firstname }} {{ lastname }}</p>
                       <p class="no-margin">{{ username }}</p>
@@ -34,6 +34,9 @@ export default {
       firstname: '',
       lastname: '',
       username: '',
+      date: new Date().toLocaleString('en-us', {
+        weekday: 'long'
+      }),
       userToggle: false
     }
   },
@@ -46,6 +49,14 @@ export default {
   },
   mounted () {
     this.getUser()
+  },
+  computed: {
+    renderNewFirst () {
+      return this.firstname ? this.firstname[0].toUpperCase() : 'null'
+    },
+    renderNewLast () {
+      return this.lastname ? this.lastname[0].toUpperCase() : 'null'
+    }
   },
   methods: {
     async getUser () {
