@@ -7,13 +7,6 @@
       <div class="kanban-wrap">
         <form v-on:submit.prevent="addTask($event)">
           <fieldset>
-            <div class="task-inputs">
-              <input type="text" v-model="userTask" autocomplete="true" placeholder="Add Task..." class="ni-input">
-              <select ref="formSelect" class="select-board">
-                <option v-for="(koptions, index) in lists" :key="koptions.id" :id="index">{{koptions.title}}</option>
-              </select>
-              <button type="submit" class="add-task">Add task</button>
-            </div>
             <div class="board-inputs">
               <button type="button" @click="addBoard" class="add-board">Add Board</button>
             </div>
@@ -24,14 +17,11 @@
             <div class="kanban-task-count" v-bind:class="switchColors(kanban)">
               <span>{{kanban.todoList.length}}</span>
             </div>
-            <div v-if="kanban.checkTitle" class="edit-title">
-              <input type="text" v-model="kanban.title">
-              <button @click="editTitle(kanban)" class="edit">done</button>
-            </div>
+            <input class="board-title" :placeholder="kanban.title"  @focus="editTitle(kanban)" @blur="editTitle(kanban, true)" v-model="kanban.title">
+            <input type="text" autocomplete="true" placeholder="Add Task..." ref="itemInput" class="ni-input" @keyup.enter="addItem(index)">
+            <button type="submit" class="add-task" @click="addItem(index)">Add task</button>
             <h3>
-              {{kanban.title}}
               <div>
-                <button @click="editTitle(kanban)" class="edit">edit</button>
                 <button @click="removeBoard(index)" class="delete">Delete</button>
               </div>
             </h3>
@@ -89,18 +79,18 @@ export default {
     }
   },
   computed: {
-    switchColors (kanban) {
-      return {
-        warning: (kanban.todoList.length > 4) && (kanban.todoList.length < 7),
-        caution: (kanban.todoList.length >= 7)
-      }
-    }
   },
   mounted () {
     console.log(this.$route.params)
     this.getBoards()
   },
   methods: {
+    switchColors (kanban) {
+      return {
+        warning: (kanban.todoList.length > 4) && (kanban.todoList.length < 7),
+        caution: (kanban.todoList.length >= 7)
+      }
+    },
     markSuccess (success, msg) {
       this.isSaved.check = !this.isSaved.check
       this.isSaved.msg = msg
@@ -127,6 +117,23 @@ export default {
       projectBoards[0].lists.forEach((item) => {
         this.lists.push(item)
       })
+    },
+    addItem (i) {
+      let input = this.$refs.itemInput[i].value
+      console.log(input.value)
+      const date = new Date().toLocaleDateString()
+      const board = this.lists[i]
+      if (!input) {
+        alert('Add some text ;)')
+        return
+      }
+      board.todoList.push({
+        date: date,
+        description: input,
+        checkMigrate: false
+      })
+      this.updateBoards()
+      input = ''
     },
     addTask: function () {
     // - 0 to coerce to number
@@ -175,8 +182,12 @@ export default {
       board.todoList.splice(index, 1)
       this.updateBoards()
     },
-    editTitle: function (board) {
-      board.checkTitle = !board.checkTitle
+    editTitle: function (board, blur) {
+      if (blur) {
+        board.checkTitle = false
+      } else {
+        board.checkTitle = !board.checkTitle
+      }
       this.updateBoards()
     }
   }
@@ -225,7 +236,7 @@ export default {
         float: left;
     }
     .board-inputs{
-        float: right;
+        float: left;
         padding: 15px 0;
     }
     .warning{
@@ -273,6 +284,13 @@ export default {
     }
     ul li{
         display: block;
+    }
+    .board-title{
+      border: 0;
+      font-size: 1.25rem;
+      text-align: center;
+      width: 100%;
+      margin: 10px 0;
     }
     .list-item{
         margin-bottom: 15px;
