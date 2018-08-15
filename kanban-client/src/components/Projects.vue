@@ -41,9 +41,9 @@
             </div>
             <div class="project-dash">
               <h1 class="main-heading">My Projects</h1>
-              <div v-if="projects.length == 0" class="empty-project-box">
-                  <h3>Well this is uneventful... Maybe try adding a project? <span>🤷</span></h3>
-              </div>
+              <button v-if="projects.length == 0" class="empty-project-box" @click="npToggle = !npToggle">
+                  Well this is uneventful... Don't know where to start? <span>🤷</span> <br/> Click here to get started.
+              </button>
               <div class="project-grid">
                 <router-link v-for="project in projects" :key="project.id" :to="{name:'Kanban', params:{title: project.title.toLowerCase().split(' ').join('-'), id: project._id}}" class="project-anchor pos-relative">
                   <div>
@@ -59,7 +59,7 @@
                   <div class="new-project-container">
                     <h3 class="no-margin">Add a new project 🎉</h3>
                     <p>A board and list will be generated once you're in the project to get you started.</p>
-                    <input type="text" class="np-input" v-model="newProject.title" @keyup.enter="addProject" placeholder="Project Name">
+                    <input type="text" class="np-input" v-model="newProject.title" @keyup.enter="addProject" placeholder="Project Name" autofocus>
                     <button @click="addProject" class="delete">Add Project</button>
                   </div>
                 </div>
@@ -141,9 +141,9 @@ export default {
     async fetchProjects () {
       const response = await project.fetchProjects()
       this.projects = response.data.projects.projects
-      if (this.projects.length < 4) {
-        this.npToggle = true
-      }
+      // if (this.projects.length < 4) {
+      //   this.npToggle = false
+      // }
       this.totalBoards = this.projects.reduce((acc, project) => {
         return acc + project.lists.length
       }, 0)
@@ -356,6 +356,7 @@ export default {
     font-size: 1.15rem;
     border: 0;
     border-bottom: 1px solid #d1d1d1;
+    background: transparent;
   }
   .delete-popup{
     position: absolute;
@@ -444,12 +445,19 @@ export default {
     width: 100%;
     background: #f1f0f0;
     color: #757474;
-    padding: 10px 20px;
+    padding: 20px;
     text-align: center;
-    border: 5px dotted #bfbdbd;
+    border: 3.5px dotted #bfbdbd;
+    font-size: 1.25rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.25s all;
+  }
+  .empty-project-box:hover{
+    background: #dddcdc;
   }
   .empty-project-box span{
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
   @keyframes prompt-open{
     0%{

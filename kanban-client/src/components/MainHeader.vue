@@ -11,7 +11,7 @@
                     </span>
                     <div class="user-info" v-if="userToggle">
                       <div class="user-icon">
-                        {{firstname}}{{lastname}}
+                        {{renderNewFirst}}{{renderNewLast}}
                       </div>
                       <p class="no-margin">{{ firstname }} {{ lastname }}</p>
                       <p class="no-margin">{{ username }}</p>
@@ -52,10 +52,10 @@ export default {
   },
   computed: {
     renderNewFirst () {
-      return this.firstname ? this.firstname[0].toUpperCase() : 'null'
+      return this.firstname ? this.firstname[0].toUpperCase() : '?'
     },
     renderNewLast () {
-      return this.lastname ? this.lastname[0].toUpperCase() : 'null'
+      return this.lastname ? this.lastname[0].toUpperCase() : '?'
     }
   },
   methods: {
