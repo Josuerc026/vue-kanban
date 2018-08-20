@@ -13,7 +13,7 @@ const User = require('./models/User')
 
 const app = express()
 app.use(morgan('combined'))
-const whitelist = ['http://localhost:8080', 'https://www.klapp.josuearce.com'];
+const whitelist = ['http://localhost:8080', 'https://www.klapp.josuearce.com']
 app.use(cors({
   origin: (origin, cb) => {
     if (whitelist.indexOf(origin) !== -1) {
@@ -151,7 +151,9 @@ app.post('/login', (req, res) => {
       req.session.user = user
       req.session.save((err) => {
         if (!err) {
-          // console.log(req.session)
+          console.log('SESSION SAVED', req.session)
+        }else{
+          console.log('error')
         }
       })
       return res.status(200).send({
