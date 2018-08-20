@@ -13,15 +13,15 @@ const User = require('./models/User')
 
 const app = express()
 app.use(morgan('combined'))
-// const whitelist = ['http://localhost:8080', 'https://www.klapp.josuearce.com']
+const whitelist = ['https://www.klapp.josuearce.com']
 app.use(cors({
-  // origin: (origin, cb) => {
-  //   if (whitelist.indexOf(origin) !== -1) {
-  //     cb(null, true)
-  //   } else {
-  //     cb(new Error('Not Allowed by CORS'))
-  //   }
-  // },
+  origin: (origin, cb) => {
+    if (whitelist.indexOf(origin) !== -1) {
+      cb(null, true)
+    } else {
+      cb(new Error('Not Allowed by CORS'))
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true // enable set cookie
 }))
